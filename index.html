@@ -1,0 +1,3048 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nagar-Raksha: Hospital Edition | Cyber Samvad 2026</title>
+  <meta name="description" content="Nagar-Raksha: Hospital Edition - Graceful Degradation and Critical Infrastructure Cybersecurity for Hospitals. Cyber Samvad Hackathon 2026 Problem Statement 4.">
+
+  <style>
+    /* ==========================================================================
+       1. CSS VARIABLES & THEMES (Light & Dark Mode)
+       ========================================================================== */
+    :root {
+      /* Shared Color Palette */
+      --danger-red: #ef4444;
+      --danger-red-dark: #b91c1c;
+      --danger-bg: rgba(239, 68, 68, 0.16);
+      --warning-amber: #f59e0b;
+      --warning-amber-dark: #b45309;
+      --warning-bg: rgba(245, 158, 11, 0.16);
+      --success-green: #10b981;
+      --success-green-dark: #047857;
+      --success-bg: rgba(16, 185, 129, 0.16);
+      --accent-cyan: #06b6d4;
+      --accent-blue: #3b82f6;
+      --accent-bg: rgba(6, 182, 212, 0.14);
+
+      /* Typography & Focus */
+      --font-sans: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+      --focus-ring: 3px solid #38bdf8;
+      --radius-sm: 6px;
+      --radius-md: 10px;
+      --radius-lg: 16px;
+      --transition-fast: 0.15s ease;
+      --transition-normal: 0.25s ease;
+    }
+
+    /* Dark Theme (Default) */
+    html[data-theme="dark"] {
+      --bg-body: #050b14;
+      --bg-surface: #0c1424;
+      --bg-surface-elevated: #111d35;
+      --bg-surface-active: #182849;
+      --border-subtle: #1c2e4f;
+      --border-strong: #2a4373;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --text-dim: #64748b;
+      --shadow-card: 0 4px 20px rgba(0, 0, 0, 0.45);
+      --banner-bg: #b91c1c;
+      --banner-text: #ffffff;
+    }
+
+    /* Light Theme */
+    html[data-theme="light"] {
+      --bg-body: #f1f5f9;
+      --bg-surface: #ffffff;
+      --bg-surface-elevated: #f8fafc;
+      --bg-surface-active: #e2e8f0;
+      --border-subtle: #cbd5e1;
+      --border-strong: #94a3b8;
+      --text-main: #0f172a;
+      --text-muted: #334155;
+      --text-dim: #64748b;
+      --shadow-card: 0 4px 18px rgba(0, 0, 0, 0.08);
+      --banner-bg: #b91c1c;
+      --banner-text: #ffffff;
+    }
+
+    /* ==========================================================================
+       2. BASE RESET & ACCESSIBILITY
+       ========================================================================== */
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg-body);
+      color: var(--text-main);
+      font-family: var(--font-sans);
+      font-size: 15px;
+      line-height: 1.5;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      transition: background-color var(--transition-normal), color var(--transition-normal);
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* Visible Keyboard Focus for Accessibility */
+    :focus-visible {
+      outline: var(--focus-ring);
+      outline-offset: 2px;
+    }
+
+    /* Standard Interactive Buttons */
+    button {
+      font-family: inherit;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      border: none;
+      border-radius: var(--radius-sm);
+      transition: all var(--transition-fast);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 8px 14px;
+      text-decoration: none;
+    }
+
+    button:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+    }
+
+    /* ==========================================================================
+       3. PERMANENT RED BANNER (Mandatory Hackathon Requirement)
+       ========================================================================== */
+    .sim-banner {
+      background-color: var(--banner-bg);
+      color: var(--banner-text);
+      padding: 9px 16px;
+      text-align: center;
+      font-weight: 800;
+      font-size: 13px;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      border-bottom: 2px solid rgba(0,0,0,0.3);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.25);
+    }
+
+    .sim-beacon {
+      width: 10px;
+      height: 10px;
+      background-color: #ffffff;
+      border-radius: 50%;
+      display: inline-block;
+      animation: pulse-beacon 1.3s infinite ease-in-out;
+    }
+
+    @keyframes pulse-beacon {
+      0%, 100% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.35); opacity: 0.35; }
+    }
+
+    /* ==========================================================================
+       4. HEADER & TOP NAV
+       ========================================================================== */
+    header {
+      background-color: var(--bg-surface);
+      border-bottom: 1px solid var(--border-subtle);
+      padding: 14px 20px;
+    }
+
+    .header-inner {
+      max-width: 1400px;
+      margin: 0 auto;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .brand-group {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .brand-icon {
+      width: 46px;
+      height: 46px;
+      border-radius: var(--radius-md);
+      background: linear-gradient(135deg, #0284c7, #2563eb, #7c3aed);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #ffffff;
+      font-weight: 900;
+      box-shadow: 0 4px 14px rgba(2, 132, 199, 0.4);
+      flex-shrink: 0;
+    }
+
+    .brand-titles h1 {
+      font-size: 20px;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .brand-badge {
+      font-size: 11px;
+      font-family: var(--font-mono);
+      font-weight: 700;
+      padding: 2px 7px;
+      border-radius: 4px;
+      background-color: var(--accent-bg);
+      color: var(--accent-cyan);
+      border: 1px solid rgba(6, 182, 212, 0.3);
+    }
+
+    .brand-tagline {
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-top: 2px;
+      font-weight: 500;
+    }
+
+    .brand-tagline em {
+      color: var(--accent-cyan);
+      font-style: normal;
+      font-weight: 700;
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    /* Button Variants */
+    .btn-secondary {
+      background-color: var(--bg-surface-elevated);
+      color: var(--text-main);
+      border: 1px solid var(--border-subtle);
+    }
+    .btn-secondary:hover:not(:disabled) {
+      background-color: var(--bg-surface-active);
+      border-color: var(--border-strong);
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #0284c7, #2563eb);
+      color: #ffffff;
+      box-shadow: 0 2px 8px rgba(37, 99, 235, 0.3);
+    }
+    .btn-primary:hover:not(:disabled) {
+      background: linear-gradient(135deg, #0369a1, #1d4ed8);
+    }
+
+    .btn-danger {
+      background: linear-gradient(135deg, #dc2626, #b91c1c);
+      color: #ffffff;
+      box-shadow: 0 2px 8px rgba(220, 38, 38, 0.3);
+    }
+    .btn-danger:hover:not(:disabled) {
+      background: linear-gradient(135deg, #b91c1c, #991b1b);
+    }
+
+    .btn-success {
+      background: linear-gradient(135deg, #059669, #047857);
+      color: #ffffff;
+      box-shadow: 0 2px 8px rgba(5, 150, 105, 0.3);
+    }
+    .btn-success:hover:not(:disabled) {
+      background: linear-gradient(135deg, #047857, #065f46);
+    }
+
+    /* ==========================================================================
+       5. MAIN CONTAINER
+       ========================================================================== */
+    main {
+      flex: 1;
+      max-width: 1400px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 16px 20px 40px;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+
+    /* ==========================================================================
+       6. KPI SCOREBOARD & PHILOSOPHY
+       ========================================================================== */
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 14px;
+    }
+
+    .kpi-card {
+      background-color: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 16px;
+      box-shadow: var(--shadow-card);
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .kpi-card::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 4px;
+      height: 100%;
+      background-color: var(--border-strong);
+    }
+
+    .kpi-card.kpi-care::before { background-color: var(--success-green); }
+    .kpi-card.kpi-people::before { background-color: var(--accent-cyan); }
+    .kpi-card.kpi-status::before { background-color: var(--warning-amber); }
+    .kpi-card.kpi-mode::before { background-color: var(--accent-blue); }
+
+    .kpi-icon-wrap {
+      width: 48px;
+      height: 48px;
+      border-radius: var(--radius-md);
+      background-color: var(--bg-surface-elevated);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      flex-shrink: 0;
+      border: 1px solid var(--border-subtle);
+    }
+
+    .kpi-data {
+      flex: 1;
+    }
+
+    .kpi-label {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--text-muted);
+    }
+
+    .kpi-value {
+      font-size: 26px;
+      font-weight: 800;
+      font-family: var(--font-mono);
+      line-height: 1.2;
+      margin-top: 2px;
+    }
+
+    .kpi-subtext {
+      font-size: 12px;
+      color: var(--text-dim);
+      margin-top: 3px;
+    }
+
+    /* Core Philosophy Banner */
+    .philosophy-banner {
+      background: linear-gradient(135deg, rgba(6, 182, 212, 0.08), rgba(59, 130, 246, 0.08));
+      border: 1px solid rgba(6, 182, 212, 0.28);
+      border-radius: var(--radius-md);
+      padding: 12px 18px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .philosophy-text {
+      font-size: 13.5px;
+      line-height: 1.5;
+    }
+
+    .philosophy-text strong {
+      color: var(--accent-cyan);
+    }
+
+    /* ==========================================================================
+       7. ATTACK SIMULATION CONTROLLER (Stage Stepper)
+       ========================================================================== */
+    .sim-controller {
+      background-color: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      padding: 18px 20px;
+      box-shadow: var(--shadow-card);
+    }
+
+    .sim-controller-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .sim-controller-title {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .sim-controller-title h2 {
+      font-size: 18px;
+      font-weight: 800;
+      letter-spacing: -0.01em;
+    }
+
+    .sim-status-pill {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      font-weight: 700;
+      padding: 3px 9px;
+      border-radius: 999px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      border: 1px solid currentColor;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .status-idle { color: var(--text-muted); background: var(--bg-surface-elevated); }
+    .status-running { color: var(--warning-amber); background: var(--warning-bg); }
+    .status-paused { color: var(--danger-red); background: var(--danger-bg); animation: pulse-border 1.5s infinite; }
+    .status-complete { color: var(--success-green); background: var(--success-bg); }
+
+    @keyframes pulse-border {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.45); }
+      50% { box-shadow: 0 0 0 6px rgba(239, 68, 68, 0); }
+    }
+
+    /* Attack Stepper Track (5 Stages) */
+    .stepper-track {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 8px;
+      position: relative;
+      margin-bottom: 12px;
+    }
+
+    .step-node {
+      background-color: var(--bg-surface-elevated);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 10px;
+      text-align: left;
+      position: relative;
+      transition: all var(--transition-fast);
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .step-node.active {
+      border-color: var(--warning-amber);
+      background-color: var(--warning-bg);
+      box-shadow: 0 0 12px rgba(245, 158, 11, 0.25);
+    }
+
+    .step-node.completed {
+      border-color: var(--success-green);
+      background-color: var(--success-bg);
+    }
+
+    .step-node.paused-step {
+      border-color: var(--danger-red);
+      background-color: var(--danger-bg);
+      animation: pulse-step 1s infinite alternate;
+    }
+
+    @keyframes pulse-step {
+      from { transform: scale(1); }
+      to { transform: scale(1.02); }
+    }
+
+    .step-num {
+      font-size: 11px;
+      font-family: var(--font-mono);
+      font-weight: 800;
+      color: var(--text-dim);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .step-name {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text-main);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .step-desc {
+      font-size: 11px;
+      color: var(--text-muted);
+      line-height: 1.3;
+    }
+
+    /* Live Ticker & Visual 4-second Countdown */
+    .sim-live-ticker-wrap {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .sim-live-ticker {
+      background-color: var(--bg-surface-elevated);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-sm);
+      padding: 9px 14px;
+      font-family: var(--font-mono);
+      font-size: 12.5px;
+      color: var(--accent-cyan);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .ticker-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .ticker-tag {
+      background-color: var(--bg-surface-active);
+      color: var(--text-main);
+      padding: 2px 7px;
+      border-radius: 4px;
+      font-weight: 800;
+      font-size: 10.5px;
+      letter-spacing: 0.05em;
+    }
+
+    .stage-countdown {
+      font-size: 12px;
+      color: var(--warning-amber);
+      font-weight: 700;
+    }
+
+    /* ==========================================================================
+       8. MAIN CONTENT LAYOUT (Two Columns)
+       ========================================================================== */
+    .layout-columns {
+      display: grid;
+      grid-template-columns: 1.15fr 0.85fr;
+      gap: 18px;
+    }
+
+    @media (max-width: 1024px) {
+      .layout-columns {
+        grid-template-columns: 1fr;
+      }
+      .stepper-track {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* ==========================================================================
+       9. HOSPITAL LIFELINES (5 ASSETS)
+       ========================================================================== */
+    .panel {
+      background-color: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      padding: 18px;
+      box-shadow: var(--shadow-card);
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .panel-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--border-subtle);
+      padding-bottom: 12px;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .panel-title {
+      font-size: 17px;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .lifelines-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .lifeline-card {
+      background-color: var(--bg-surface-elevated);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 14px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      transition: all var(--transition-fast);
+      position: relative;
+    }
+
+    .lifeline-card:hover {
+      border-color: var(--border-strong);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    }
+
+    .lifeline-card.under-attack {
+      border-color: var(--danger-red);
+      background-color: var(--danger-bg);
+      box-shadow: 0 0 14px rgba(239, 68, 68, 0.25);
+    }
+
+    .lifeline-card.in-fallback {
+      border-color: var(--warning-amber);
+      background-color: var(--warning-bg);
+    }
+
+    .lifeline-card.isolated-state {
+      border-color: #6b7280;
+      opacity: 0.8;
+    }
+
+    .card-top {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .asset-id-badge {
+      font-family: var(--font-mono);
+      font-weight: 800;
+      font-size: 12px;
+      padding: 3px 8px;
+      border-radius: 4px;
+      background-color: var(--bg-surface-active);
+      color: var(--accent-cyan);
+      border: 1px solid var(--border-strong);
+    }
+
+    .asset-meta {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .asset-title {
+      font-size: 16px;
+      font-weight: 800;
+      color: var(--text-main);
+    }
+
+    .badge-pill {
+      font-size: 11px;
+      font-weight: 700;
+      padding: 2px 7px;
+      border-radius: 4px;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .badge-critical { background-color: var(--danger-bg); color: var(--danger-red); border: 1px solid var(--danger-red); }
+    .badge-high { background-color: var(--warning-bg); color: var(--warning-amber); border: 1px solid var(--warning-amber); }
+    .badge-medium { background-color: rgba(59, 130, 246, 0.15); color: var(--accent-blue); border: 1px solid var(--accent-blue); }
+    .badge-low { background-color: var(--success-bg); color: var(--success-green); border: 1px solid var(--success-green); }
+
+    .asset-details-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 8px;
+      font-size: 13px;
+      background-color: var(--bg-surface);
+      border-radius: var(--radius-sm);
+      padding: 9px 12px;
+      border: 1px solid var(--border-subtle);
+    }
+
+    .detail-item strong {
+      color: var(--text-muted);
+      font-size: 11px;
+      text-transform: uppercase;
+      display: block;
+      margin-bottom: 2px;
+    }
+
+    .progress-bar-wrap {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .progress-bar-label {
+      display: flex;
+      justify-content: space-between;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .progress-track {
+      height: 8px;
+      background-color: var(--bg-surface-active);
+      border-radius: 999px;
+      overflow: hidden;
+      display: flex;
+    }
+
+    .progress-fill {
+      height: 100%;
+      border-radius: 999px;
+      transition: width var(--transition-normal), background-color var(--transition-normal);
+    }
+
+    .fill-green { background: linear-gradient(90deg, #10b981, #059669); }
+    .fill-amber { background: linear-gradient(90deg, #f59e0b, #d97706); }
+    .fill-red { background: linear-gradient(90deg, #ef4444, #dc2626); }
+
+    .card-actions {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-top: 4px;
+    }
+
+    /* ==========================================================================
+       10. ACTIVE ALERT & OPERATOR COMMAND PANEL
+       ========================================================================== */
+    .alert-panel {
+      background-color: var(--bg-surface-elevated);
+      border: 2px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      position: relative;
+    }
+
+    .alert-panel.active-threat {
+      border-color: var(--danger-red);
+      background: linear-gradient(180deg, var(--danger-bg) 0%, var(--bg-surface-elevated) 100%);
+    }
+
+    .alert-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .alert-title-group h3 {
+      font-size: 16px;
+      font-weight: 800;
+      color: var(--text-main);
+    }
+
+    .alert-threat-text {
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+
+    /* Math Breakdown Box */
+    .score-math-box {
+      background-color: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-sm);
+      padding: 10px 12px;
+      font-family: var(--font-mono);
+      font-size: 12px;
+    }
+
+    .math-formula {
+      color: var(--accent-cyan);
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+
+    .math-result {
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    /* Recommendation Banner */
+    .recommendation-box {
+      background-color: rgba(6, 182, 212, 0.12);
+      border: 1px solid rgba(6, 182, 212, 0.35);
+      border-radius: var(--radius-sm);
+      padding: 10px 12px;
+      font-size: 13px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .recommendation-box strong {
+      color: var(--accent-cyan);
+    }
+
+    /* 4 Decision Options Radio/Button Group */
+    .options-group {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .option-card {
+      border: 1px solid var(--border-subtle);
+      background-color: var(--bg-surface);
+      border-radius: var(--radius-sm);
+      padding: 10px 12px;
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      cursor: pointer;
+      transition: all var(--transition-fast);
+      user-select: none;
+    }
+
+    .option-card:hover {
+      border-color: var(--border-strong);
+      background-color: var(--bg-surface-active);
+    }
+
+    .option-card.selected {
+      border-color: var(--accent-blue);
+      background-color: rgba(59, 130, 246, 0.15);
+      box-shadow: 0 0 0 1px var(--accent-blue);
+    }
+
+    .option-card.recommended-option {
+      border-color: var(--accent-cyan);
+    }
+
+    .option-card input[type="radio"] {
+      margin-top: 3px;
+      accent-color: var(--accent-blue);
+      cursor: pointer;
+    }
+
+    .option-content {
+      flex: 1;
+      font-size: 13px;
+    }
+
+    .option-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    .option-title {
+      font-weight: 700;
+      color: var(--text-main);
+    }
+
+    .option-impact-badges {
+      display: flex;
+      gap: 6px;
+      font-size: 11px;
+      font-family: var(--font-mono);
+    }
+
+    .option-note {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+
+    /* Operator Confirmation Button Bar */
+    .operator-action-bar {
+      border-top: 1px solid var(--border-subtle);
+      padding-top: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    /* ==========================================================================
+       11. HASH VERIFICATION & RECOVERY WORKFLOW
+       ========================================================================== */
+    .recovery-box {
+      background-color: var(--bg-surface-elevated);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 14px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .hash-display {
+      background-color: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-sm);
+      padding: 8px 12px;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      word-break: break-all;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .hash-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    .hash-label {
+      color: var(--text-dim);
+      font-weight: 700;
+    }
+
+    .hash-val {
+      color: var(--accent-cyan);
+    }
+
+    /* ==========================================================================
+       12. AUDIT LOG & PLAYBOOK TABS
+       ========================================================================== */
+    .tabs-container {
+      margin-top: 10px;
+    }
+
+    .tab-nav {
+      display: flex;
+      gap: 8px;
+      border-bottom: 1px solid var(--border-subtle);
+      padding-bottom: 8px;
+      margin-bottom: 12px;
+    }
+
+    .tab-btn {
+      background: transparent;
+      color: var(--text-muted);
+      border: 1px solid transparent;
+      padding: 6px 14px;
+      border-radius: var(--radius-sm);
+    }
+
+    .tab-btn.active {
+      color: var(--text-main);
+      background-color: var(--bg-surface-elevated);
+      border-color: var(--border-subtle);
+      font-weight: 700;
+    }
+
+    .tab-content {
+      display: none;
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+
+    /* Audit Log Table */
+    .log-table-wrap {
+      max-height: 280px;
+      overflow-y: auto;
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-sm);
+    }
+
+    .log-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 12px;
+      text-align: left;
+    }
+
+    .log-table th {
+      background-color: var(--bg-surface-elevated);
+      color: var(--text-muted);
+      font-weight: 700;
+      padding: 8px 10px;
+      position: sticky;
+      top: 0;
+      border-bottom: 1px solid var(--border-subtle);
+      text-transform: uppercase;
+      font-size: 11px;
+    }
+
+    .log-table td {
+      padding: 8px 10px;
+      border-bottom: 1px solid var(--border-subtle);
+      color: var(--text-main);
+    }
+
+    .log-table tr:hover td {
+      background-color: var(--bg-surface-active);
+    }
+
+    /* Playbook Cards */
+    .playbook-card {
+      background-color: var(--bg-surface-elevated);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-sm);
+      padding: 12px;
+      margin-bottom: 8px;
+    }
+
+    .playbook-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-weight: 700;
+      font-size: 14px;
+      margin-bottom: 6px;
+    }
+
+    .playbook-step {
+      font-size: 13px;
+      color: var(--text-muted);
+      padding-left: 14px;
+      position: relative;
+      margin-top: 4px;
+    }
+
+    .playbook-step::before {
+      content: "•";
+      position: absolute;
+      left: 0;
+      color: var(--accent-cyan);
+      font-weight: bold;
+    }
+
+    /* ==========================================================================
+       13. MODALS (Operator Confirmation & Jury Summary)
+       ========================================================================== */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(0, 0, 0, 0.78);
+      backdrop-filter: blur(4px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 200;
+      padding: 16px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity var(--transition-fast);
+    }
+
+    .modal-overlay.open {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .modal-dialog {
+      background-color: var(--bg-surface);
+      border: 2px solid var(--border-strong);
+      border-radius: var(--radius-lg);
+      max-width: 650px;
+      width: 100%;
+      max-height: 90vh;
+      overflow-y: auto;
+      padding: 24px;
+      box-shadow: 0 12px 40px rgba(0,0,0,0.6);
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .modal-dialog.modal-danger {
+      border-color: var(--danger-red);
+    }
+
+    .modal-dialog.modal-success {
+      border-color: var(--success-green);
+    }
+
+    .modal-title {
+      font-size: 19px;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    /* Jury Report Grid */
+    .summary-stats-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+      margin: 8px 0;
+    }
+
+    .summary-stat-box {
+      background-color: var(--bg-surface-elevated);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-sm);
+      padding: 10px;
+    }
+
+    .summary-stat-label {
+      font-size: 11px;
+      color: var(--text-dim);
+      text-transform: uppercase;
+      font-weight: 700;
+    }
+
+    .summary-stat-val {
+      font-size: 20px;
+      font-weight: 800;
+      font-family: var(--font-mono);
+      margin-top: 2px;
+      color: var(--accent-cyan);
+    }
+
+    /* ==========================================================================
+       14. FOOTER
+       ========================================================================== */
+    footer {
+      border-top: 1px solid var(--border-subtle);
+      background-color: var(--bg-surface);
+      padding: 18px 20px;
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-top: auto;
+    }
+
+    .footer-inner {
+      max-width: 1400px;
+      margin: 0 auto;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .footer-tags {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .footer-tag {
+      font-family: var(--font-mono);
+      background-color: var(--bg-surface-elevated);
+      padding: 2px 8px;
+      border-radius: 4px;
+      border: 1px solid var(--border-subtle);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ==========================================================================
+       1. MANDATORY SIMULATION BANNER
+       ========================================================================== -->
+  <div class="sim-banner" role="alert" aria-live="assertive">
+    <span class="sim-beacon" aria-hidden="true"></span>
+    <span>SIMULATION ONLY: no real systems are connected</span>
+    <span style="opacity: 0.9; font-size: 11px; margin-left: 8px;">[Cyber Samvad Hackathon 2026 • Problem Statement 4: Critical Infrastructure]</span>
+  </div>
+
+  <!-- ==========================================================================
+       2. HEADER & CONTROLS
+       ========================================================================== -->
+  <header>
+    <div class="header-inner">
+      <div class="brand-group">
+        <div class="brand-icon" aria-hidden="true">
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+            <path d="M12 8v8"/>
+            <path d="M8 12h8"/>
+          </svg>
+        </div>
+        <div class="brand-titles">
+          <h1>
+            <span>Nagar-Raksha: Hospital Edition</span>
+            <span class="brand-badge">HOSPITAL OT/ICU RESILIENCE</span>
+          </h1>
+          <p class="brand-tagline">
+            “An attacker keeps attacking. We <em>prevent, contain and recover</em>, and <em>patient care keeps running</em>.”
+          </p>
+        </div>
+      </div>
+
+      <div class="header-actions">
+        <!-- Backend API Connection Indicator -->
+        <div id="backendStatusPill" class="badge-pill badge-low" style="padding: 6px 11px; font-size: 11px; font-family: var(--font-mono); border: 1px solid currentColor;" title="FastAPI + SQLite Backend Status">
+          <span id="backendStatusDot" style="width: 8px; height: 8px; border-radius: 50%; background: var(--success-green); display: inline-block;"></span>
+          <span id="backendStatusText">Backend: Connecting...</span>
+        </div>
+
+        <!-- Sound FX Toggle -->
+        <button id="soundToggleBtn" class="btn-secondary" title="Toggle audio cues" aria-label="Toggle Sound">
+          <span id="soundIcon">🔔</span>
+          <span id="soundLabel">Sound On</span>
+        </button>
+
+        <!-- Theme Toggle -->
+        <button id="themeToggleBtn" class="btn-secondary" title="Toggle Light / Dark Mode" aria-label="Toggle Theme">
+          <span id="themeIcon">☀️</span>
+          <span id="themeLabel">Light Mode</span>
+        </button>
+
+        <!-- Reset All Systems -->
+        <button id="resetAllBtn" class="btn-secondary" title="Reset all lifelines and logs" aria-label="Reset System">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M8 16H3v5"/></svg>
+          <span>Reset All</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- ==========================================================================
+       3. MAIN DASHBOARD CONTENT
+       ========================================================================== -->
+  <main id="mainContent">
+
+    <!-- KPI & Hospital Care Continuity Overview -->
+    <section class="kpi-grid" aria-label="Hospital Resilience Metrics">
+      <!-- Care Continuity Score (Average of all 5 assets) -->
+      <div class="kpi-card kpi-care">
+        <div class="kpi-icon-wrap" aria-hidden="true" style="color: var(--success-green);">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+        </div>
+        <div class="kpi-data">
+          <div class="kpi-label">Care Continuity Score</div>
+          <div class="kpi-value" id="kpiCareScore" style="color: var(--success-green);">100%</div>
+          <div class="kpi-subtext" id="kpiCareSubtext">Average across all 5 hospital lifelines</div>
+        </div>
+      </div>
+
+      <!-- Dependent Population -->
+      <div class="kpi-card kpi-people">
+        <div class="kpi-icon-wrap" aria-hidden="true" style="color: var(--accent-cyan);">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        </div>
+        <div class="kpi-data">
+          <div class="kpi-label">Patients &amp; Citizens Protected</div>
+          <div class="kpi-value" id="kpiPeople">43,800</div>
+          <div class="kpi-subtext">Ambulances, ICU/OT, Wards, OPD</div>
+        </div>
+      </div>
+
+      <!-- Hospital Operational Status -->
+      <div class="kpi-card kpi-status">
+        <div class="kpi-icon-wrap" aria-hidden="true" style="color: var(--warning-amber);">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        </div>
+        <div class="kpi-data">
+          <div class="kpi-label">Hospital Threat State</div>
+          <div class="kpi-value" id="kpiThreatState" style="color: var(--success-green); font-size: 20px;">NORMAL</div>
+          <div class="kpi-subtext" id="kpiThreatSubtext">Zero hospital shutdowns permitted</div>
+        </div>
+      </div>
+
+      <!-- Human Confirmation Requirement -->
+      <div class="kpi-card kpi-mode">
+        <div class="kpi-icon-wrap" aria-hidden="true" style="color: var(--accent-blue);">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M19 11l2 2 4-4"/></svg>
+        </div>
+        <div class="kpi-data">
+          <div class="kpi-label">Operator Governance</div>
+          <div class="kpi-value" style="font-size: 19px;">HUMAN CONFIRM</div>
+          <div class="kpi-subtext">Every containment requires operator sign-off</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Core Philosophy Comparison Note -->
+    <div class="philosophy-banner">
+      <div class="philosophy-text">
+        <strong>Why Nagar-Raksha?</strong> Traditional IT cybersecurity isolates systems completely (0% service), cutting power to ICU ventilators and turning away emergency ambulances. <strong>Nagar-Raksha enforces Safe Fallback Modes and Staff 'By-Hand' Playbooks</strong> so patients stay alive while cyber teams contain and recover.
+      </div>
+      <div style="display: flex; gap: 8px;">
+        <button class="btn-secondary" id="openAllPlaybooksBtn" style="font-size: 13px; white-space: nowrap;">
+          📖 Staff Playbooks
+        </button>
+        <button class="btn-secondary" id="exportLogBtn" style="font-size: 13px; white-space: nowrap;">
+          💾 Export Audit Log
+        </button>
+      </div>
+    </div>
+
+    <!-- ==========================================================================
+         4. ATTACK SIMULATION MODE (5 Stages, 4s interval, pause at 3 & 4)
+         ========================================================================== -->
+    <section class="sim-controller" aria-label="Simulated Attacker Controls">
+      <div class="sim-controller-header">
+        <div class="sim-controller-title">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="color: var(--danger-red);"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+          <h2>Multi-Stage Hospital Attack Simulation</h2>
+          <span class="sim-status-pill status-idle" id="simStatusPill">IDLE (READY)</span>
+        </div>
+
+        <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
+          <button id="startAttackBtn" class="btn-danger" style="font-size: 14px; padding: 9px 18px;">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+            <span>Start Attack</span>
+          </button>
+
+          <button id="pauseAttackBtn" class="btn-secondary" disabled>
+            <span>Pause</span>
+          </button>
+
+          <button id="resetAttackBtn" class="btn-secondary">
+            <span>Reset Attack</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- 5-Stage Stepper Track -->
+      <div class="stepper-track" id="stepperTrack" role="list">
+        <!-- Stage 1 -->
+        <div class="step-node" id="stepNode1" role="listitem">
+          <div class="step-num">
+            <span>STAGE 1</span>
+            <span class="badge-pill badge-low">PREVENT</span>
+          </div>
+          <div class="step-name">Display Brute Force</div>
+          <div class="step-desc">DSP Display: Failed logins filtered at edge (Care: 100%)</div>
+        </div>
+
+        <!-- Stage 2 -->
+        <div class="step-node" id="stepNode2" role="listitem">
+          <div class="step-num">
+            <span>STAGE 2</span>
+            <span class="badge-pill badge-high">DETECT</span>
+          </div>
+          <div class="step-name">Water Sensor Spoof</div>
+          <div class="step-desc">PMP Water: Corrupt telemetry detected &amp; flagged</div>
+        </div>
+
+        <!-- Stage 3 (Auto-Pause) -->
+        <div class="step-node" id="stepNode3" role="listitem">
+          <div class="step-num">
+            <span>STAGE 3 [PAUSE]</span>
+            <span class="badge-pill badge-critical">CRITICAL</span>
+          </div>
+          <div class="step-name">Ambulance Signal Attack</div>
+          <div class="step-desc">SIG Route: Timing override! Pauses for operator confirm</div>
+        </div>
+
+        <!-- Stage 4 (Auto-Pause) -->
+        <div class="step-node" id="stepNode4" role="listitem">
+          <div class="step-num">
+            <span>STAGE 4 [PAUSE]</span>
+            <span class="badge-pill badge-critical">LETHAL</span>
+          </div>
+          <div class="step-name">ICU Backup Power Strike</div>
+          <div class="step-desc">PWR Power: Gen disable attempt! Verify clean SHA-256 hash</div>
+        </div>
+
+        <!-- Stage 5 -->
+        <div class="step-node" id="stepNode5" role="listitem">
+          <div class="step-num">
+            <span>STAGE 5</span>
+            <span class="badge-pill badge-low">RECOVER</span>
+          </div>
+          <div class="step-name">Verified Restoration</div>
+          <div class="step-desc">All lifelines safely restored from clean golden master</div>
+        </div>
+      </div>
+
+      <!-- Live Simulation Ticker & 4-second Countdown Timer -->
+      <div class="sim-live-ticker-wrap">
+        <div class="sim-live-ticker" id="simLiveTicker">
+          <div class="ticker-left">
+            <span class="ticker-tag">SYSTEM TELEMETRY</span>
+            <span id="tickerMessage">Attacker idle. All 5 lifelines operating normally at 100% baseline care.</span>
+          </div>
+          <div class="stage-countdown" id="stageCountdownText">Interval: 4.0s / stage</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==========================================================================
+         5. TWO-COLUMN OPERATIONAL DASHBOARD
+         ========================================================================== -->
+    <div class="layout-columns">
+
+      <!-- LEFT COLUMN: The 5 Hospital Lifelines -->
+      <section class="panel" aria-labelledby="lifelinesTitle">
+        <div class="panel-header">
+          <div class="panel-title" id="lifelinesTitle">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="color: var(--accent-cyan);"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+            <span>Hospital Lifelines (5 Assets)</span>
+          </div>
+          <span style="font-size: 12px; color: var(--text-muted);">Real-time Telemetry &amp; Fallbacks</span>
+        </div>
+
+        <div class="lifelines-list" id="lifelinesContainer">
+          <!-- Dynamically populated from JS -->
+        </div>
+      </section>
+
+      <!-- RIGHT COLUMN: Operator Incident Response & Decision Command Center -->
+      <section class="panel" aria-labelledby="commandTitle">
+        <div class="panel-header">
+          <div class="panel-title" id="commandTitle">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="color: var(--warning-amber);"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            <span>Operator Response &amp; Governance</span>
+          </div>
+          <span class="badge-pill badge-medium" id="incidentBadge">STANDBY</span>
+        </div>
+
+        <!-- Active Threat & Containment Decision Card -->
+        <div class="alert-panel" id="alertDecisionPanel">
+          <div class="alert-header">
+            <div class="alert-title-group">
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <span class="asset-id-badge" id="alertAssetId">---</span>
+                <h3 id="alertAssetName">No Active Threats Detected</h3>
+              </div>
+              <p class="alert-threat-text" id="alertThreatDesc">Hospital monitoring running. Press 'Start Attack' above or simulate on any asset.</p>
+            </div>
+            <div id="alertSeverityBadge" class="badge-pill badge-low">NORMAL</div>
+          </div>
+
+          <!-- Priority Math Breakdown (Strict prompt formula) -->
+          <div class="score-math-box" id="scoreMathBox">
+            <div class="math-formula">Priority Formula: sev × crit × urg × (1 + ppl / 50,000)</div>
+            <div class="math-result" id="mathResultContent">
+              <span>sev: 0</span> • <span>crit: 0</span> • <span>urg: 0</span> • <span>ppl: 0</span>
+              <strong style="margin-left: 8px; color: var(--accent-cyan);">Score = 0.0 (Low)</strong>
+            </div>
+          </div>
+
+          <!-- Recommendation Banner -->
+          <div class="recommendation-box" id="recommendationBox">
+            <span style="font-size: 18px;">💡</span>
+            <div>
+              <div style="font-weight: 700;">Nagar-Raksha Recommendation:</div>
+              <div id="recommendationText" style="font-size: 12px; color: var(--text-main);">
+                Monitor only. No action required during normal operations.
+              </div>
+            </div>
+          </div>
+
+          <!-- 4 Response Options with strict specifications -->
+          <div class="options-group" id="optionsGroup" role="radiogroup" aria-label="Containment Options">
+            <!-- Option 1: Monitor only -->
+            <label class="option-card" id="optCard1">
+              <input type="radio" name="containmentOpt" value="monitor" checked>
+              <div class="option-content">
+                <div class="option-header">
+                  <span class="option-title">1. Monitor Only</span>
+                  <div class="option-impact-badges">
+                    <span class="badge-pill badge-low">Stops: NO</span>
+                    <span class="badge-pill badge-low">Care Kept: 100%</span>
+                  </div>
+                </div>
+                <div class="option-note">Passive observation. Safe for low-severity alerts or reconnaissance probes.</div>
+              </div>
+            </label>
+
+            <!-- Option 2: Restrict remote access -->
+            <label class="option-card" id="optCard2">
+              <input type="radio" name="containmentOpt" value="restrict">
+              <div class="option-content">
+                <div class="option-header">
+                  <span class="option-title">2. Restrict Remote Access</span>
+                  <div class="option-impact-badges">
+                    <span class="badge-pill badge-medium">Stops: PARTLY</span>
+                    <span class="badge-pill badge-low">Care Kept: 95%</span>
+                  </div>
+                </div>
+                <div class="option-note">Sever WAN/telemetry gateways. Local automated controls continue operating.</div>
+              </div>
+            </label>
+
+            <!-- Option 3: Switch to safe fallback (Recommended) -->
+            <label class="option-card recommended-option" id="optCard3">
+              <input type="radio" name="containmentOpt" value="fallback">
+              <div class="option-content">
+                <div class="option-header">
+                  <span class="option-title">3. Switch to Safe Fallback</span>
+                  <div class="option-impact-badges">
+                    <span class="badge-pill badge-critical">Stops: YES</span>
+                    <span class="badge-pill badge-high" id="fallbackCareKeptBadge">Care Kept: 60-90%</span>
+                  </div>
+                </div>
+                <div class="option-note" id="fallbackOptionNote">
+                  Engages local isolated safe mode and activates manual staff playbook.
+                </div>
+              </div>
+            </label>
+
+            <!-- Option 4: Full isolation -->
+            <label class="option-card" id="optCard4">
+              <input type="radio" name="containmentOpt" value="isolate">
+              <div class="option-content">
+                <div class="option-header">
+                  <span class="option-title">4. Full System Isolation</span>
+                  <div class="option-impact-badges">
+                    <span class="badge-pill badge-critical">Stops: YES</span>
+                    <span class="badge-pill badge-critical">Care Kept: 0%</span>
+                  </div>
+                </div>
+                <div class="option-note" style="color: var(--danger-red); font-weight: 600;">
+                  ⚠️ NOT RECOMMENDED: Patient care stops completely! (Risk of ICU/ventilator loss).
+                </div>
+              </div>
+            </label>
+          </div>
+
+          <!-- Human Operator Action Bar -->
+          <div class="operator-action-bar">
+            <div style="font-size: 12px; color: var(--text-muted); display: flex; align-items: center; gap: 6px;">
+              <span style="display: inline-block; width: 8px; height: 8px; background: var(--accent-cyan); border-radius: 50%;"></span>
+              <span>Operator authorization mandatory</span>
+            </div>
+
+            <button id="confirmContainmentBtn" class="btn-primary" style="padding: 10px 18px;" disabled>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+              <span id="confirmBtnText">Confirm Operator Action</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Cryptographic Clean Copy Verification & Recovery Box -->
+        <div class="recovery-box" id="recoveryBox">
+          <div style="display: flex; align-items: center; justify-content: space-between;">
+            <div style="font-weight: 800; font-size: 14px; display: flex; align-items: center; gap: 6px;">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color: var(--accent-cyan);"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+              <span>Cryptographic Clean Copy Recovery</span>
+            </div>
+            <span class="badge-pill badge-low" id="hashStatusBadge">GOLDEN MASTER VERIFIED</span>
+          </div>
+
+          <div class="hash-display">
+            <div class="hash-row">
+              <span class="hash-label">ACTIVE CONFIG HASH:</span>
+              <span class="hash-val" id="activeHashVal">a3f89... (clean)</span>
+            </div>
+            <div class="hash-row">
+              <span class="hash-label">GOLDEN MASTER BACKUP:</span>
+              <span class="hash-val" id="cleanHashVal">a3f89... (clean)</span>
+            </div>
+          </div>
+
+          <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px; flex-wrap: wrap;">
+            <div style="font-size: 11px; color: var(--text-muted);">
+              Pure SHA-256 verification ensures no persistent rootkit exists before restoring normal care.
+            </div>
+            <button id="restoreCleanBtn" class="btn-success" style="font-size: 12px; padding: 6px 12px;" disabled>
+              🔄 Restore Clean Copy
+            </button>
+          </div>
+        </div>
+
+        <!-- Audit Log & Staff Playbook Tabs -->
+        <div class="tabs-container">
+          <div class="tab-nav" role="tablist">
+            <button class="tab-btn active" id="tabBtnLog" role="tab" aria-selected="true" aria-controls="tabContentLog">
+              📋 Incident Audit Log (<span id="logCountBadge">0</span>)
+            </button>
+            <button class="tab-btn" id="tabBtnStaff" role="tab" aria-selected="false" aria-controls="tabContentStaff">
+              🧑‍⚕️ Staff 'By-Hand' Playbooks
+            </button>
+          </div>
+
+          <!-- Log Content -->
+          <div class="tab-content active" id="tabContentLog" role="tabpanel">
+            <div class="log-table-wrap">
+              <table class="log-table" aria-label="Incident Audit Table">
+                <thead>
+                  <tr>
+                    <th>Time</th>
+                    <th>Asset</th>
+                    <th>Threat / Action</th>
+                    <th>Score</th>
+                    <th>Care Kept</th>
+                  </tr>
+                </thead>
+                <tbody id="logTableBody">
+                  <tr>
+                    <td colspan="5" style="text-align: center; color: var(--text-dim); padding: 16px;">
+                      No incidents logged yet. Start simulation to observe live defense actions.
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Staff Playbooks Content -->
+          <div class="tab-content" id="tabContentStaff" role="tabpanel">
+            <div id="playbooksList">
+              <!-- Dynamically populated -->
+            </div>
+          </div>
+        </div>
+
+      </section>
+
+    </div>
+
+  </main>
+
+  <!-- ==========================================================================
+       6. MODALS
+       ========================================================================== -->
+  <!-- A: OPERATOR CONFIRMATION MODAL FOR PAUSED STAGES -->
+  <div class="modal-overlay" id="operatorModal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <div class="modal-dialog modal-danger">
+      <div class="modal-title" id="modalTitle">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="color: var(--danger-red);"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+        <span id="modalHeaderTitle">Operator Action Required</span>
+      </div>
+
+      <p style="font-size: 14px; color: var(--text-main);" id="modalBodyText">
+        Simulation paused automatically. A critical lifeline is under attack. A human operator must confirm the containment action to protect patient care.
+      </p>
+
+      <div style="background-color: var(--bg-surface-elevated); border: 1px solid var(--border-subtle); border-radius: var(--radius-sm); padding: 12px; display: flex; flex-direction: column; gap: 8px;">
+        <div style="font-size: 12px; font-weight: 700; color: var(--accent-cyan); text-transform: uppercase;">By-Hand Staff Playbook:</div>
+        <div style="font-size: 13px; font-weight: 600; color: var(--text-main);" id="modalStaffPlaybook">
+          Staff protocol details...
+        </div>
+      </div>
+
+      <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 8px;">
+        <button id="modalDismissBtn" class="btn-secondary">
+          Review in Dashboard
+        </button>
+        <button id="modalConfirmActionBtn" class="btn-primary">
+          Confirm Safe Fallback &amp; Resume
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- B: POST-SIMULATION JURY REPORT MODAL -->
+  <div class="modal-overlay" id="jurySummaryModal" role="dialog" aria-modal="true" aria-labelledby="juryModalTitle">
+    <div class="modal-dialog modal-success">
+      <div class="modal-title" id="juryModalTitle" style="color: var(--success-green);">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+        <span>Simulation Complete: Attack Repelled &amp; Hospital Resilient!</span>
+      </div>
+
+      <p style="font-size: 14px; color: var(--text-main);">
+        The multi-stage simulated cyber attack was defeated with <strong>zero total hospital shutdowns</strong>. All critical medical lifelines continued delivering patient care using Nagar-Raksha graceful degradation!
+      </p>
+
+      <div class="summary-stats-grid">
+        <div class="summary-stat-box">
+          <div class="summary-stat-label">Total Hospital Blackout</div>
+          <div class="summary-stat-val" style="color: var(--success-green);">0 SECONDS</div>
+        </div>
+        <div class="summary-stat-box">
+          <div class="summary-stat-label">Lowest Care Score</div>
+          <div class="summary-stat-val" style="color: var(--warning-amber);">85% (Safe)</div>
+        </div>
+        <div class="summary-stat-box">
+          <div class="summary-stat-label">Citizens Protected</div>
+          <div class="summary-stat-val">43,800+</div>
+        </div>
+        <div class="summary-stat-box">
+          <div class="summary-stat-label">Operator Governance</div>
+          <div class="summary-stat-val">100% Sign-Off</div>
+        </div>
+      </div>
+
+      <div style="font-size: 13px; color: var(--text-muted); background: var(--bg-surface-elevated); padding: 10px; border-radius: var(--radius-sm); border: 1px solid var(--border-subtle);">
+        <strong>Jury Key Takeaway:</strong> Unlike blunt IT network cutoffs that trigger catastrophic casualties in ICUs, Nagar-Raksha combines deterministic priority scoring, fail-safe degradation, and staff playbooks to ensure healthcare continuity.
+      </div>
+
+      <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 8px;">
+        <button id="juryModalCloseBtn" class="btn-secondary">
+          Close Report
+        </button>
+        <button id="juryModalExportBtn" class="btn-success">
+          💾 Download Incident Audit Log
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==========================================================================
+       7. FOOTER
+       ========================================================================== -->
+  <footer>
+    <div class="footer-inner">
+      <div>
+        <strong>Nagar-Raksha: Hospital Edition</strong> • Cyber Samvad Hackathon 2026
+        <div style="color: var(--text-dim); margin-top: 2px;">
+          Problem Statement 4: Smart City and Critical Infrastructure Cybersecurity
+        </div>
+      </div>
+
+      <div class="footer-tags">
+        <span class="footer-tag">Standalone: Plain HTML+CSS+JS</span>
+        <span class="footer-tag">Zero External Dependencies</span>
+        <span class="footer-tag">100% Offline Capable</span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ==========================================================================
+       8. JAVASCRIPT LOGIC (Plain Vanilla JS, Self-Contained)
+       ========================================================================== -->
+  <script>
+    /**
+     * Nagar-Raksha: Hospital Edition - Full-Stack Client
+     * Cyber Samvad Hackathon 2026 - Problem Statement 4
+     * 
+     * Connects to Python FastAPI backend with SQLite persistence.
+     * Features graceful offline fallback if backend server is not running.
+     */
+
+    const API_BASE = (typeof window !== "undefined" && window.location.protocol === "file:")
+      ? "http://127.0.0.1:8000"
+      : (typeof window !== "undefined" ? window.location.origin : "http://127.0.0.1:8000");
+    let isBackendConnected = false;
+    let pollInterval = null;
+
+    // --- PURE JAVASCRIPT SHA-256 IMPLEMENTATION ---
+    function computeSHA256(ascii) {
+      function rightRotate(value, amount) {
+        return (value >>> amount) | (value << (32 - amount));
+      }
+      const mathPow = Math.pow;
+      const maxWord = mathPow(2, 32);
+      const lengthProperty = 'length';
+      let i, j;
+      let result = '';
+
+      const words = [];
+      const asciiBitLength = ascii[lengthProperty] * 8;
+
+      let hash = [];
+      const k = [];
+      let primeCounter = 0;
+
+      const isComposite = {};
+      for (let candidate = 2; primeCounter < 64; candidate++) {
+        if (!isComposite[candidate]) {
+          for (i = 0; i < 313; i += candidate) {
+            isComposite[i] = candidate;
+          }
+          hash[primeCounter] = (mathPow(candidate, .5) * maxWord) | 0;
+          k[primeCounter++] = (mathPow(candidate, 1 / 3) * maxWord) | 0;
+        }
+      }
+
+      hash = hash.slice(0, 8);
+
+      words[asciiBitLength >> 5] |= 0x80 << (24 - (asciiBitLength % 32));
+      words[(((asciiBitLength + 64) >> 9) << 4) + 15] = asciiBitLength;
+
+      for (i = 0; i < ascii[lengthProperty]; i++) {
+        words[i >> 2] |= ascii.charCodeAt(i) << ((3 - (i % 4)) * 8);
+      }
+
+      for (j = 0; j < words[lengthProperty]; j += 16) {
+        const w = words.slice(j, j + 16);
+        const oldHash = hash.slice(0);
+
+        for (i = 0; i < 64; i++) {
+          const w15 = w[i - 15] || 0;
+          const w2 = w[i - 2] || 0;
+
+          const s0 = rightRotate(w15, 7) ^ rightRotate(w15, 18) ^ (w15 >>> 3);
+          const s1 = rightRotate(w2, 17) ^ rightRotate(w2, 19) ^ (w2 >>> 10);
+          w[i] = (i < 16) ? (w[i] || 0) : ((w[i - 16] + s0 + w[i - 7] + s1) | 0);
+
+          const s1Final = rightRotate(hash[4], 6) ^ rightRotate(hash[4], 11) ^ rightRotate(hash[4], 25);
+          const ch = (hash[4] & hash[5]) ^ ((~hash[4]) & hash[6]);
+          const temp1 = (hash[7] + s1Final + ch + k[i] + w[i]) | 0;
+          const s0Final = rightRotate(hash[0], 2) ^ rightRotate(hash[0], 13) ^ rightRotate(hash[0], 22);
+          const maj = (hash[0] & hash[1]) ^ (hash[0] & hash[2]) ^ (hash[1] & hash[2]);
+          const temp2 = (s0Final + maj) | 0;
+
+          hash[7] = hash[6];
+          hash[6] = hash[5];
+          hash[5] = hash[4];
+          hash[4] = (hash[3] + temp1) | 0;
+          hash[3] = hash[2];
+          hash[2] = hash[1];
+          hash[1] = hash[0];
+          hash[0] = (temp1 + temp2) | 0;
+        }
+
+        for (i = 0; i < 8; i++) {
+          hash[i] = (hash[i] + oldHash[i]) | 0;
+        }
+      }
+
+      for (i = 0; i < 8; i++) {
+        for (j = 3; j >= 0; j--) {
+          const b = (hash[i] >> (j * 8)) & 255;
+          result += ((b < 16) ? '0' : '') + b.toString(16);
+        }
+      }
+      return result;
+    }
+
+    // --- SYNTHESIZED SOUND EFFECTS (Offline Web Audio) ---
+    let soundEnabled = true;
+    let audioCtx = null;
+
+    function playTone(freq = 440, type = "sine", duration = 0.15) {
+      if (!soundEnabled) return;
+      try {
+        if (!audioCtx) {
+          const AudioContext = window.AudioContext || window.webkitAudioContext;
+          if (AudioContext) audioCtx = new AudioContext();
+        }
+        if (audioCtx && audioCtx.state === "suspended") {
+          audioCtx.resume();
+        }
+        if (!audioCtx) return;
+
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = type;
+        osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+        gain.gain.setValueAtTime(0.08, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + duration);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start();
+        osc.stop(audioCtx.currentTime + duration);
+      } catch (e) {}
+    }
+
+    // --- DATA: THE FIVE HOSPITAL LIFELINES (Strict specifications) ---
+    const INITIAL_HOSPITAL_LIFELINES = [
+      {
+        id: "SIG",
+        name: "Ambulance Route Signal",
+        life: "ambulance access",
+        crit: 5,
+        ppl: 40000,
+        fb: "Fixed-timer mode",
+        kept: 60,
+        cfg: "mode=fixed_timer;cycle=60s;green_corridor=lane1;isolated=true;auth_key=SIG-SAFE-V1",
+        staff: "Traffic police keep the ambulance lane clear",
+        thr: "Unauthorised commands changing signal timings",
+        sev: 5,
+        urg: 5,
+        currentMode: "Normal",
+        currentCare: 100,
+        underAttack: false
+      },
+      {
+        id: "PWR",
+        name: "Backup Power Controller",
+        life: "power for ICU and OT",
+        crit: 5,
+        ppl: 1500,
+        fb: "Manual generator start",
+        kept: 85,
+        cfg: "mode=manual_gen;lock=disengaged;icu_priority=high;telemetry=isolated;key=PWR-SAFE-V1",
+        staff: "Engineer starts the generator by hand if mains fails",
+        thr: "Remote command trying to disable generator start",
+        sev: 5,
+        urg: 4,
+        currentMode: "Normal",
+        currentCare: 100,
+        underAttack: false
+      },
+      {
+        id: "PMP",
+        name: "Water Pump Controller",
+        life: "water for wards",
+        crit: 4,
+        ppl: 1500,
+        fb: "Manual valve control",
+        kept: 80,
+        cfg: "mode=manual_valve;target_psi=60;sensor_sync=disabled;bypass=active;key=PMP-SAFE-V1",
+        staff: "Maintenance team runs valves by hand",
+        thr: "Sensor sending impossible readings",
+        sev: 4,
+        urg: 3,
+        currentMode: "Normal",
+        currentCare: 100,
+        underAttack: false
+      },
+      {
+        id: "TOK",
+        name: "Patient Token Server",
+        life: "OPD queue and registration",
+        crit: 3,
+        ppl: 800,
+        fb: "Paper tokens at counters",
+        kept: 50,
+        cfg: "mode=paper_triage;db_sync=offline_buffer;counter_override=local;key=TOK-SAFE-V1",
+        staff: "Counter staff hand out paper tokens, runners carry lab slips",
+        thr: "Files being locked on the token server",
+        sev: 4,
+        urg: 4,
+        currentMode: "Normal",
+        currentCare: 100,
+        underAttack: false
+      },
+      {
+        id: "DSP",
+        name: "Waiting-Room Display",
+        life: "information screens",
+        crit: 1,
+        ppl: 300,
+        fb: "Static notice board",
+        kept: 90,
+        cfg: "mode=static_board;hdmi_feed=cached_img;network_rx=disabled;key=DSP-SAFE-V1",
+        staff: "Staff announce by voice",
+        thr: "Repeated failed login attempts",
+        sev: 1,
+        urg: 1,
+        currentMode: "Normal",
+        currentCare: 100,
+        underAttack: false
+      }
+    ];
+
+    INITIAL_HOSPITAL_LIFELINES.forEach(asset => {
+      asset.goldenHash = computeSHA256(asset.cfg);
+      asset.activeHash = asset.goldenHash;
+    });
+
+    // --- APPLICATION STATE ---
+    let hospitalAssets = JSON.parse(JSON.stringify(INITIAL_HOSPITAL_LIFELINES));
+    let activeAlertAsset = null;
+    let incidentLogs = [];
+    let isAttackRunning = false;
+    let attackStage = 0; // 0 to 5
+    let attackTimer = null;
+    let countdownTimer = null;
+    let secondsLeftInStage = 4;
+    let isPausedForHuman = false;
+
+    // --- CORE CALCULATION FORMULAS (Strict prompt specifications) ---
+    function calculatePriorityScore(asset) {
+      const { sev, crit, urg, ppl } = asset;
+      const score = sev * crit * urg * (1 + (ppl / 50000));
+      return Number(score.toFixed(2));
+    }
+
+    function getPriorityLabel(score) {
+      if (score >= 100) return { label: "Critical", class: "badge-critical" };
+      if (score >= 30) return { label: "High", class: "badge-high" };
+      if (score >= 10) return { label: "Medium", class: "badge-medium" };
+      return { label: "Low", class: "badge-low" };
+    }
+
+    function getSystemRecommendation(score, asset) {
+      if (score < 10) {
+        return {
+          option: "monitor",
+          reason: `Priority is Low (${score}). Threat can be monitored/filtered without disrupting any hospital system.`,
+          careKept: 100,
+          stopsThreat: "No"
+        };
+      }
+      return {
+        option: "fallback",
+        reason: `Priority is ${getPriorityLabel(score).label} (${score}). Safe Fallback '${asset.fb}' neutralizes the attack while keeping ${asset.kept}% of patient care running.`,
+        careKept: asset.kept,
+        stopsThreat: "Yes"
+      };
+    }
+
+    function calculateCareContinuity() {
+      const sum = hospitalAssets.reduce((acc, curr) => acc + curr.currentCare, 0);
+      return Math.round(sum / hospitalAssets.length);
+    }
+
+    // --- BACKEND API INTEGRATION ---
+    async function checkBackendConnection() {
+      const statusPill = document.getElementById("backendStatusPill");
+      const statusText = document.getElementById("backendStatusText");
+      const statusDot = document.getElementById("backendStatusDot");
+
+      try {
+        const res = await fetch(`${API_BASE}/api/health`);
+        if (res.ok) {
+          isBackendConnected = true;
+          statusPill.className = "badge-pill badge-low";
+          statusDot.style.background = "var(--success-green)";
+          statusText.textContent = "FastAPI + SQLite Active";
+          await syncWithBackend();
+          return;
+        }
+      } catch (err) {
+        // Backend not running; fallback to offline mode
+      }
+
+      isBackendConnected = false;
+      statusPill.className = "badge-pill badge-medium";
+      statusDot.style.background = "var(--warning-amber)";
+      statusText.textContent = "Standalone Offline Mode";
+    }
+
+    async function syncWithBackend() {
+      if (!isBackendConnected) return;
+      try {
+        // Sync Lifelines
+        const lifeRes = await fetch(`${API_BASE}/api/lifelines`);
+        if (lifeRes.ok) {
+          const data = await lifeRes.json();
+          if (data.assets && data.assets.length === 5) {
+            data.assets.forEach(bAsset => {
+              const local = hospitalAssets.find(a => a.id === bAsset.id);
+              if (local) {
+                local.currentMode = bAsset.current_mode;
+                local.currentCare = bAsset.current_care;
+                local.underAttack = bAsset.under_attack;
+                local.activeHash = bAsset.active_hash;
+              }
+            });
+          }
+        }
+
+        // Sync Audit Logs
+        const logRes = await fetch(`${API_BASE}/api/audit-logs?limit=50`);
+        if (logRes.ok) {
+          const logData = await logRes.json();
+          if (logData.logs && logData.logs.length > 0) {
+            incidentLogs = logData.logs.map(l => ({
+              time: l.timestamp,
+              assetId: l.asset_id,
+              action: l.description,
+              score: l.priority_score,
+              careKept: l.care_continuity_after
+            }));
+          }
+        }
+
+        renderAll();
+      } catch (e) {
+        console.warn("Backend sync notice:", e);
+      }
+    }
+
+    // --- UI RENDERING FUNCTIONS ---
+    function renderAll() {
+      renderLifelines();
+      updateCareContinuityKPI();
+      renderAlertDecisionPanel();
+      renderAuditLogs();
+      renderPlaybooksList();
+      updateStepperDisplay();
+    }
+
+    function updateCareContinuityKPI() {
+      const careScore = calculateCareContinuity();
+      const kpiScoreEl = document.getElementById("kpiCareScore");
+      const kpiSubEl = document.getElementById("kpiCareSubtext");
+      const kpiThreatEl = document.getElementById("kpiThreatState");
+
+      kpiScoreEl.textContent = `${careScore}%`;
+
+      if (careScore >= 90) {
+        kpiScoreEl.style.color = "var(--success-green)";
+        kpiSubEl.textContent = "Optimal Resilience: Care running smoothly across hospital";
+      } else if (careScore >= 70) {
+        kpiScoreEl.style.color = "var(--warning-amber)";
+        kpiSubEl.textContent = "Graceful Degradation: Fallback active, zero fatal downtime";
+      } else {
+        kpiScoreEl.style.color = "var(--danger-red)";
+        kpiSubEl.textContent = "Degraded: Staff manually managing critical corridors";
+      }
+
+      if (activeAlertAsset && activeAlertAsset.underAttack) {
+        const score = calculatePriorityScore(activeAlertAsset);
+        const { label } = getPriorityLabel(score);
+        kpiThreatEl.textContent = `${label.toUpperCase()} ALERT`;
+        kpiThreatEl.style.color = label === "Critical" ? "var(--danger-red)" : "var(--warning-amber)";
+      } else if (hospitalAssets.some(a => a.currentMode === "Fallback")) {
+        kpiThreatEl.textContent = "FALLBACK ACTIVE";
+        kpiThreatEl.style.color = "var(--warning-amber)";
+      } else {
+        kpiThreatEl.textContent = "NORMAL (100%)";
+        kpiThreatEl.style.color = "var(--success-green)";
+      }
+    }
+
+    function renderLifelines() {
+      const container = document.getElementById("lifelinesContainer");
+      container.innerHTML = "";
+
+      hospitalAssets.forEach(asset => {
+        const score = calculatePriorityScore(asset);
+        const prio = getPriorityLabel(score);
+
+        const card = document.createElement("div");
+        card.className = "lifeline-card";
+        if (asset.underAttack) card.classList.add("under-attack");
+        if (asset.currentMode === "Fallback") card.classList.add("in-fallback");
+        if (asset.currentMode === "Isolated") card.classList.add("isolated-state");
+
+        let fillClass = "fill-green";
+        if (asset.currentCare < 50) fillClass = "fill-red";
+        else if (asset.currentCare < 100) fillClass = "fill-amber";
+
+        card.innerHTML = `
+          <div class="card-top">
+            <div class="asset-meta">
+              <span class="asset-id-badge">${asset.id}</span>
+              <span class="asset-title">${asset.name}</span>
+              <span class="badge-pill ${prio.class}">Score: ${score} [${prio.label}]</span>
+            </div>
+            <div>
+              <span class="badge-pill ${asset.currentMode === 'Normal' ? 'badge-low' : asset.currentMode === 'Fallback' ? 'badge-high' : 'badge-critical'}">
+                MODE: ${asset.currentMode.toUpperCase()}
+              </span>
+            </div>
+          </div>
+
+          <div class="asset-details-grid">
+            <div class="detail-item">
+              <strong>Protects</strong>
+              <span>${asset.life}</span>
+            </div>
+            <div class="detail-item">
+              <strong>People Depending</strong>
+              <span>${asset.ppl.toLocaleString()} citizens</span>
+            </div>
+            <div class="detail-item">
+              <strong>Safe Fallback Mode</strong>
+              <span>${asset.fb} (${asset.kept}% care kept)</span>
+            </div>
+            <div class="detail-item">
+              <strong>Staff Playbook</strong>
+              <span>${asset.staff}</span>
+            </div>
+          </div>
+
+          <div class="progress-bar-wrap">
+            <div class="progress-bar-label">
+              <span>Patient Care Delivery</span>
+              <span><strong>${asset.currentCare}%</strong> Operational</span>
+            </div>
+            <div class="progress-track" role="progressbar" aria-valuenow="${asset.currentCare}" aria-valuemin="0" aria-valuemax="100">
+              <div class="progress-fill ${fillClass}" style="width: ${asset.currentCare}%;"></div>
+            </div>
+          </div>
+
+          <div class="card-actions">
+            <div style="font-size: 11px; color: var(--text-dim); font-family: var(--font-mono);">
+              Crit: ${asset.crit}/5 • Sev: ${asset.sev}/5 • Urg: ${asset.urg}/5
+            </div>
+            <div style="display: flex; gap: 8px;">
+              <button class="btn-secondary" style="font-size: 12px; padding: 4px 10px;" onclick="triggerManualAlert('${asset.id}')">
+                ⚡ Simulate Threat
+              </button>
+            </div>
+          </div>
+        `;
+
+        container.appendChild(card);
+      });
+    }
+
+    function renderAlertDecisionPanel() {
+      const panel = document.getElementById("alertDecisionPanel");
+      const idEl = document.getElementById("alertAssetId");
+      const nameEl = document.getElementById("alertAssetName");
+      const descEl = document.getElementById("alertThreatDesc");
+      const badgeEl = document.getElementById("alertSeverityBadge");
+      const mathResultEl = document.getElementById("mathResultContent");
+      const recTextEl = document.getElementById("recommendationText");
+      const confirmBtn = document.getElementById("confirmContainmentBtn");
+      const fallbackBadge = document.getElementById("fallbackCareKeptBadge");
+      const fallbackNote = document.getElementById("fallbackOptionNote");
+      const activeHashEl = document.getElementById("activeHashVal");
+      const cleanHashEl = document.getElementById("cleanHashVal");
+      const hashStatusEl = document.getElementById("hashStatusBadge");
+      const restoreBtn = document.getElementById("restoreCleanBtn");
+
+      if (!activeAlertAsset) {
+        panel.classList.remove("active-threat");
+        idEl.textContent = "---";
+        nameEl.textContent = "No Active Threat Selected";
+        descEl.textContent = "All 5 lifelines functioning normally. Start attack simulation or click 'Simulate Threat' on any lifeline.";
+        badgeEl.textContent = "STANDBY";
+        badgeEl.className = "badge-pill badge-low";
+
+        mathResultEl.innerHTML = `<span>sev: 0</span> • <span>crit: 0</span> • <span>urg: 0</span> • <span>ppl: 0</span> <strong style="margin-left: 8px; color: var(--accent-cyan);">Score = 0.0 (Low)</strong>`;
+        recTextEl.textContent = "Monitor only. All hospital systems at 100% capacity.";
+        confirmBtn.disabled = true;
+        restoreBtn.disabled = true;
+
+        activeHashEl.textContent = "Hash baseline clean";
+        cleanHashEl.textContent = "Hash golden master match";
+        hashStatusEl.textContent = "GOLDEN MASTER VERIFIED";
+        hashStatusEl.className = "badge-pill badge-low";
+        return;
+      }
+
+      panel.classList.add("active-threat");
+      const asset = activeAlertAsset;
+      const score = calculatePriorityScore(asset);
+      const prio = getPriorityLabel(score);
+      const rec = getSystemRecommendation(score, asset);
+
+      idEl.textContent = asset.id;
+      nameEl.textContent = `${asset.name} Under Attack`;
+      descEl.textContent = `Threat Detected: "${asset.thr}".`;
+      badgeEl.textContent = `${prio.label.toUpperCase()} (Score ${score})`;
+      badgeEl.className = `badge-pill ${prio.class}`;
+
+      mathResultEl.innerHTML = `
+        <span>sev: <strong>${asset.sev}</strong></span> × 
+        <span>crit: <strong>${asset.crit}</strong></span> × 
+        <span>urg: <strong>${asset.urg}</strong></span> × 
+        <span>(1 + ${asset.ppl}/50000 = <strong>${(1 + asset.ppl / 50000).toFixed(3)}</strong>)</span>
+        <strong style="margin-left: 8px; color: ${score >= 100 ? 'var(--danger-red)' : 'var(--accent-cyan)'};">
+          = ${score} [${prio.label}]
+        </strong>
+      `;
+
+      recTextEl.textContent = rec.reason;
+      confirmBtn.disabled = false;
+
+      fallbackBadge.textContent = `Care Kept: ${asset.kept}%`;
+      fallbackNote.textContent = `Activates '${asset.fb}'. Playbook: ${asset.staff}.`;
+
+      const radios = document.getElementsByName("containmentOpt");
+      for (const r of radios) {
+        if (r.value === rec.option) {
+          r.checked = true;
+          updateSelectedOptionStyles(r.value);
+        }
+      }
+
+      activeHashEl.textContent = asset.activeHash;
+      cleanHashEl.textContent = asset.goldenHash;
+
+      if (asset.activeHash === asset.goldenHash && asset.currentMode === "Normal") {
+        hashStatusEl.textContent = "VERIFIED CLEAN";
+        hashStatusEl.className = "badge-pill badge-low";
+        restoreBtn.disabled = true;
+      } else {
+        hashStatusEl.textContent = asset.activeHash === asset.goldenHash ? "CLEAN BACKUP READY" : "TAMPERED / MISMATCH";
+        hashStatusEl.className = "badge-pill badge-high";
+        restoreBtn.disabled = false;
+      }
+    }
+
+    function updateSelectedOptionStyles(selectedValue) {
+      document.querySelectorAll(".option-card").forEach(c => c.classList.remove("selected"));
+      if (selectedValue === "monitor") document.getElementById("optCard1")?.classList.add("selected");
+      if (selectedValue === "restrict") document.getElementById("optCard2")?.classList.add("selected");
+      if (selectedValue === "fallback") document.getElementById("optCard3")?.classList.add("selected");
+      if (selectedValue === "isolate") document.getElementById("optCard4")?.classList.add("selected");
+    }
+
+    document.getElementsByName("containmentOpt").forEach(radio => {
+      radio.addEventListener("change", (e) => {
+        updateSelectedOptionStyles(e.target.value);
+      });
+    });
+
+    function renderAuditLogs() {
+      const tbody = document.getElementById("logTableBody");
+      const badge = document.getElementById("logCountBadge");
+      badge.textContent = incidentLogs.length;
+
+      if (incidentLogs.length === 0) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="5" style="text-align: center; color: var(--text-dim); padding: 16px;">
+              No incidents logged yet. Start simulation to observe live defense actions.
+            </td>
+          </tr>
+        `;
+        return;
+      }
+
+      tbody.innerHTML = incidentLogs.map(log => `
+        <tr>
+          <td style="font-family: var(--font-mono); color: var(--text-dim);">${log.time}</td>
+          <td><strong style="color: var(--accent-cyan);">${log.assetId}</strong></td>
+          <td>${log.action}</td>
+          <td><span class="badge-pill ${log.score >= 100 ? 'badge-critical' : log.score >= 30 ? 'badge-high' : 'badge-low'}">${log.score}</span></td>
+          <td style="font-weight: 700; color: ${log.careKept >= 80 ? 'var(--success-green)' : log.careKept >= 50 ? 'var(--warning-amber)' : 'var(--danger-red)'};">
+            ${log.careKept}%
+          </td>
+        </tr>
+      `).join("");
+    }
+
+    function renderPlaybooksList() {
+      const container = document.getElementById("playbooksList");
+      container.innerHTML = hospitalAssets.map(asset => `
+        <div class="playbook-card">
+          <div class="playbook-header">
+            <span>${asset.id}: ${asset.name}</span>
+            <span class="badge-pill badge-medium">Fallback: ${asset.fb} (${asset.kept}% Care)</span>
+          </div>
+          <div class="playbook-step"><strong>Assigned Personnel:</strong> ${asset.staff}</div>
+          <div class="playbook-step"><strong>Critical Function:</strong> ${asset.life} (Protects ${asset.ppl.toLocaleString()} people)</div>
+          <div class="playbook-step"><strong>Safe Fallback Settings:</strong> <code style="font-family: var(--font-mono); font-size: 11px;">${asset.cfg}</code></div>
+          <div class="playbook-step"><strong>SHA-256 Golden Master Signature:</strong> <code style="font-family: var(--font-mono); font-size: 10px; color: var(--accent-cyan);">${asset.goldenHash.substring(0, 24)}...</code></div>
+        </div>
+      `).join("");
+    }
+
+    function addAuditLog(assetId, action, score, careKept) {
+      const now = new Date();
+      const timeStr = now.toTimeString().split(" ")[0];
+      incidentLogs.unshift({
+        time: timeStr,
+        assetId,
+        action,
+        score,
+        careKept
+      });
+      renderAuditLogs();
+    }
+
+    // --- OPERATOR DECISION & ACTIONS ---
+    document.getElementById("confirmContainmentBtn").addEventListener("click", async () => {
+      if (!activeAlertAsset) return;
+
+      const radios = document.getElementsByName("containmentOpt");
+      let selectedOption = "fallback";
+      for (const r of radios) {
+        if (r.checked) {
+          selectedOption = r.value;
+          break;
+        }
+      }
+
+      playTone(520, "triangle", 0.18);
+      await applyOperatorDecision(activeAlertAsset, selectedOption);
+
+      if (isPausedForHuman) {
+        isPausedForHuman = false;
+        closeModal();
+        setTickerMessage(`Operator authorized containment on ${activeAlertAsset.id}. Resuming simulation in 4s...`);
+        document.getElementById("simStatusPill").textContent = "RUNNING";
+        document.getElementById("simStatusPill").className = "sim-status-pill status-running";
+        startStageCountdown(4, () => triggerNextStage());
+      }
+    });
+
+    async function applyOperatorDecision(asset, option) {
+      const score = calculatePriorityScore(asset);
+
+      if (isBackendConnected) {
+        try {
+          const res = await fetch(`${API_BASE}/api/simulation/operator-action`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              asset_id: asset.id,
+              action: option,
+              operator_notes: "Operator action submitted from dashboard"
+            })
+          });
+          if (res.ok) {
+            await syncWithBackend();
+            return;
+          }
+        } catch (e) {
+          console.warn("Backend operator-action call failed, falling back locally:", e);
+        }
+      }
+
+      // Offline Fallback
+      if (option === "monitor") {
+        asset.currentMode = "Normal";
+        asset.currentCare = 100;
+        asset.underAttack = false;
+        addAuditLog(asset.id, "Operator chose 'Monitor Only'. Telemetry under passive surveillance.", score, 100);
+        setTickerMessage(`Operator chose 'Monitor Only' for ${asset.id}. Hospital care maintained at 100%.`);
+      } else if (option === "restrict") {
+        asset.currentMode = "Restricted";
+        asset.currentCare = 95;
+        asset.underAttack = false;
+        addAuditLog(asset.id, "Operator restricted remote access. Telemetry WAN isolated.", score, 95);
+        setTickerMessage(`Restricted remote access on ${asset.id}. Local controls operational (95% care).`);
+      } else if (option === "fallback") {
+        asset.currentMode = "Fallback";
+        asset.currentCare = asset.kept;
+        asset.underAttack = false;
+        addAuditLog(asset.id, `Operator switched to Safe Fallback: '${asset.fb}'. Playbook deployed: ${asset.staff}`, score, asset.kept);
+        setTickerMessage(`SAFE FALLBACK ENGAGED: ${asset.id} in '${asset.fb}'. ${asset.kept}% patient care kept running!`);
+      } else if (option === "isolate") {
+        asset.currentMode = "Isolated";
+        asset.currentCare = 0;
+        asset.underAttack = false;
+        addAuditLog(asset.id, "CRITICAL WARNING: Operator selected Full Isolation. Patient care halted completely (0%).", score, 0);
+        setTickerMessage(`WARNING: ${asset.id} isolated completely! 0% care maintained - Not recommended for hospitals.`);
+      }
+
+      renderAll();
+    }
+
+    document.getElementById("restoreCleanBtn").addEventListener("click", async () => {
+      if (!activeAlertAsset) return;
+      playTone(660, "sine", 0.25);
+
+      if (isBackendConnected) {
+        try {
+          const res = await fetch(`${API_BASE}/api/recovery/restore`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ asset_id: activeAlertAsset.id })
+          });
+          if (res.ok) {
+            await syncWithBackend();
+            setTickerMessage(`SUCCESS: ${activeAlertAsset.id} restored from verified clean golden master via backend.`);
+            return;
+          }
+        } catch (e) {}
+      }
+
+      restoreAssetToClean(activeAlertAsset);
+    });
+
+    function restoreAssetToClean(asset) {
+      asset.activeHash = asset.goldenHash;
+      asset.currentMode = "Normal";
+      asset.currentCare = 100;
+      asset.underAttack = false;
+
+      addAuditLog(
+        asset.id,
+        `Clean recovery verified against Golden Master SHA-256 (${asset.goldenHash.substring(0, 10)}...). Restored to 100% normal.`,
+        0,
+        100
+      );
+
+      setTickerMessage(`SUCCESS: ${asset.id} restored from verified clean golden master. 100% normal care restored.`);
+      renderAll();
+    }
+
+    async function triggerManualAlert(assetId) {
+      playTone(320, "sawtooth", 0.2);
+
+      if (isBackendConnected) {
+        try {
+          const res = await fetch(`${API_BASE}/api/alerts/simulate`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ asset_id: assetId })
+          });
+          if (res.ok) {
+            const data = await res.json();
+            await syncWithBackend();
+            activeAlertAsset = hospitalAssets.find(a => a.id === assetId);
+            setTickerMessage(`ALERT on ${assetId} (${data.asset.name}): ${data.asset.thr}. Priority: ${data.asset.priority_label} (${data.asset.priority_score})`);
+            renderAll();
+            return;
+          }
+        } catch (e) {}
+      }
+
+      const asset = hospitalAssets.find(a => a.id === assetId);
+      if (!asset) return;
+
+      asset.underAttack = true;
+      activeAlertAsset = asset;
+      asset.activeHash = computeSHA256(asset.cfg + ";injected_exploit=true");
+
+      const score = calculatePriorityScore(asset);
+      const prio = getPriorityLabel(score);
+
+      addAuditLog(asset.id, `Threat Alert: ${asset.thr}`, score, asset.currentCare);
+      setTickerMessage(`ALERT on ${asset.id} (${asset.name}): ${asset.thr}. Priority: ${prio.label} (${score})`);
+
+      renderAll();
+    }
+
+    // --- ATTACK SIMULATION ENGINE ---
+    const startAttackBtn = document.getElementById("startAttackBtn");
+    const pauseAttackBtn = document.getElementById("pauseAttackBtn");
+    const resetAttackBtn = document.getElementById("resetAttackBtn");
+
+    startAttackBtn.addEventListener("click", async () => {
+      playTone(440, "triangle", 0.15);
+      if (isBackendConnected) {
+        try {
+          const res = await fetch(`${API_BASE}/api/simulation/start`, { method: "POST" });
+          if (res.ok) {
+            isAttackRunning = true;
+            isPausedForHuman = false;
+            startAttackBtn.disabled = true;
+            pauseAttackBtn.disabled = false;
+            document.getElementById("simStatusPill").textContent = "ATTACK IN PROGRESS";
+            document.getElementById("simStatusPill").className = "sim-status-pill status-running";
+            await syncWithBackend();
+            startStageCountdown(4, () => triggerNextStage());
+            return;
+          }
+        } catch (e) {}
+      }
+      startAttackSimulationOffline();
+    });
+
+    async function triggerNextStage() {
+      if (isBackendConnected) {
+        try {
+          const res = await fetch(`${API_BASE}/api/simulation/next-stage`, { method: "POST" });
+          if (res.ok) {
+            const data = await res.json();
+            attackStage = data.stage;
+            await syncWithBackend();
+
+            if (data.is_paused_for_operator) {
+              isPausedForHuman = true;
+              if (attackTimer) clearTimeout(attackTimer);
+              if (countdownTimer) clearInterval(countdownTimer);
+              document.getElementById("stageCountdownText").textContent = "PAUSED: AWAITING OPERATOR";
+              document.getElementById("simStatusPill").textContent = "PAUSED (AWAITING OPERATOR)";
+              document.getElementById("simStatusPill").className = "sim-status-pill status-paused";
+
+              activeAlertAsset = hospitalAssets.find(a => a.id === data.active_incident.asset_id);
+              showOperatorModal(
+                data.active_incident.modal_headline,
+                data.active_incident.modal_body,
+                data.active_incident.staff_playbook
+              );
+              renderAll();
+              return;
+            }
+
+            if (data.status === "COMPLETED") {
+              isAttackRunning = false;
+              isPausedForHuman = false;
+              startAttackBtn.disabled = false;
+              pauseAttackBtn.disabled = true;
+              document.getElementById("simStatusPill").textContent = "ATTACK REPELLED (SUCCESS)";
+              document.getElementById("simStatusPill").className = "sim-status-pill status-complete";
+              document.getElementById("stageCountdownText").textContent = "Attack fully repelled";
+              setTickerMessage("VICTORY: Attacker contained and repelled! Hospital Care Continuity never flatlined. All 5 lifelines 100% normal.");
+
+              // Open Jury Summary Modal from backend report
+              await loadBackendReportModal();
+              return;
+            }
+
+            // Normal progression -> queue next stage in 4s
+            startStageCountdown(4, () => triggerNextStage());
+            return;
+          }
+        } catch (e) {}
+      }
+      executeNextAttackStageOffline();
+    }
+
+    pauseAttackBtn.addEventListener("click", async () => {
+      if (isBackendConnected) {
+        try {
+          const ep = pauseAttackBtn.textContent === "Resume" ? "resume" : "pause";
+          await fetch(`${API_BASE}/api/simulation/${ep}`, { method: "POST" });
+        } catch (e) {}
+      }
+      togglePauseAttackSimulation();
+    });
+
+    resetAttackBtn.addEventListener("click", async () => {
+      if (isBackendConnected) {
+        try {
+          await fetch(`${API_BASE}/api/simulation/reset`, { method: "POST" });
+          await syncWithBackend();
+        } catch (e) {}
+      }
+      resetAttackSimulation();
+    });
+
+    function startAttackSimulationOffline() {
+      if (isAttackRunning && !isPausedForHuman) return;
+
+      if (isPausedForHuman) {
+        isPausedForHuman = false;
+        closeModal();
+        document.getElementById("simStatusPill").textContent = "RUNNING";
+        document.getElementById("simStatusPill").className = "sim-status-pill status-running";
+        startStageCountdown(4, () => triggerNextStage());
+        return;
+      }
+
+      attackStage = 0;
+      isAttackRunning = true;
+      isPausedForHuman = false;
+
+      startAttackBtn.disabled = true;
+      pauseAttackBtn.disabled = false;
+      document.getElementById("simStatusPill").textContent = "ATTACK IN PROGRESS";
+      document.getElementById("simStatusPill").className = "sim-status-pill status-running";
+
+      setTickerMessage("Simulated attacker initiated multi-stage campaign against hospital lifelines...");
+      executeNextAttackStageOffline();
+    }
+
+    function togglePauseAttackSimulation() {
+      if (!isAttackRunning) return;
+
+      if (attackTimer) {
+        clearTimeout(attackTimer);
+        attackTimer = null;
+        if (countdownTimer) clearInterval(countdownTimer);
+
+        pauseAttackBtn.textContent = "Resume";
+        document.getElementById("simStatusPill").textContent = "PAUSED";
+        document.getElementById("simStatusPill").className = "sim-status-pill status-paused";
+        setTickerMessage("Simulation paused by operator.");
+      } else {
+        pauseAttackBtn.textContent = "Pause";
+        document.getElementById("simStatusPill").textContent = "ATTACK IN PROGRESS";
+        document.getElementById("simStatusPill").className = "sim-status-pill status-running";
+        setTickerMessage("Simulation resumed.");
+        startStageCountdown(secondsLeftInStage || 4, () => triggerNextStage());
+      }
+    }
+
+    function resetAttackSimulation() {
+      if (attackTimer) clearTimeout(attackTimer);
+      if (countdownTimer) clearInterval(countdownTimer);
+      attackTimer = null;
+      countdownTimer = null;
+
+      isAttackRunning = false;
+      attackStage = 0;
+      isPausedForHuman = false;
+
+      startAttackBtn.disabled = false;
+      pauseAttackBtn.disabled = true;
+      pauseAttackBtn.textContent = "Pause";
+
+      document.getElementById("simStatusPill").textContent = "IDLE (READY)";
+      document.getElementById("simStatusPill").className = "sim-status-pill status-idle";
+      document.getElementById("stageCountdownText").textContent = "Interval: 4.0s / stage";
+
+      hospitalAssets = JSON.parse(JSON.stringify(INITIAL_HOSPITAL_LIFELINES));
+      hospitalAssets.forEach(a => {
+        a.goldenHash = computeSHA256(a.cfg);
+        a.activeHash = a.goldenHash;
+      });
+      activeAlertAsset = null;
+
+      closeModal();
+      setTickerMessage("Simulation reset. All 5 lifelines restored to 100% normal operations.");
+      renderAll();
+    }
+
+    function startStageCountdown(seconds, callback) {
+      if (attackTimer) clearTimeout(attackTimer);
+      if (countdownTimer) clearInterval(countdownTimer);
+
+      secondsLeftInStage = seconds;
+      const countEl = document.getElementById("stageCountdownText");
+      countEl.textContent = `Next stage in: ${secondsLeftInStage}s`;
+
+      countdownTimer = setInterval(() => {
+        secondsLeftInStage--;
+        if (secondsLeftInStage > 0) {
+          countEl.textContent = `Next stage in: ${secondsLeftInStage}s`;
+        } else {
+          clearInterval(countdownTimer);
+          countdownTimer = null;
+          countEl.textContent = "Transitioning stage...";
+        }
+      }, 1000);
+
+      attackTimer = setTimeout(() => {
+        if (countdownTimer) clearInterval(countdownTimer);
+        callback();
+      }, seconds * 1000);
+    }
+
+    function executeNextAttackStageOffline() {
+      attackStage++;
+
+      if (attackStage === 1) {
+        playTone(300, "sine", 0.15);
+        const dsp = hospitalAssets.find(a => a.id === "DSP");
+        dsp.underAttack = true;
+        activeAlertAsset = dsp;
+
+        const score = calculatePriorityScore(dsp);
+        addAuditLog(dsp.id, "Stage 1: Attacker probe - Repeated failed login attempts on Waiting-Room Display.", score, dsp.currentCare);
+        setTickerMessage("Stage 1/5: Reconnaissance on Waiting-Room Display (DSP). Low priority (Score: 1.01). Preventative edge filter active.");
+        renderAll();
+
+        setTimeout(() => {
+          applyOperatorDecision(dsp, "monitor");
+          startStageCountdown(4, () => triggerNextStage());
+        }, 1500);
+
+      } else if (attackStage === 2) {
+        playTone(380, "sawtooth", 0.2);
+        const pmp = hospitalAssets.find(a => a.id === "PMP");
+        pmp.underAttack = true;
+        activeAlertAsset = pmp;
+        pmp.activeHash = computeSHA256(pmp.cfg + ";telemetry_corrupted=true");
+
+        const score = calculatePriorityScore(pmp);
+        addAuditLog(pmp.id, "Stage 2: Sensor spoofing - Water pump controller receiving impossible 800 PSI readings.", score, pmp.currentCare);
+        setTickerMessage("Stage 2/5: Telemetry anomaly on Water Pump (PMP). Priority High (Score: 49.44). Engaging Safe Fallback.");
+        renderAll();
+
+        setTimeout(() => {
+          applyOperatorDecision(pmp, "fallback");
+          startStageCountdown(4, () => triggerNextStage());
+        }, 1800);
+
+      } else if (attackStage === 3) {
+        playTone(220, "square", 0.4);
+        const sig = hospitalAssets.find(a => a.id === "SIG");
+        sig.underAttack = true;
+        activeAlertAsset = sig;
+        sig.activeHash = computeSHA256(sig.cfg + ";forged_timing_cycle=corrupted");
+
+        const score = calculatePriorityScore(sig);
+        addAuditLog(sig.id, "Stage 3 [ALERT]: Unauthorised commands attempting to alter ambulance traffic signals!", score, sig.currentCare);
+        setTickerMessage("Stage 3/5: CRITICAL ATTACK on Ambulance Signal (SIG)! Score: 225.0. SIMULATION PAUSED for Human Operator confirmation.");
+
+        if (attackTimer) clearTimeout(attackTimer);
+        if (countdownTimer) clearInterval(countdownTimer);
+        document.getElementById("stageCountdownText").textContent = "PAUSED: AWAITING OPERATOR";
+
+        isPausedForHuman = true;
+        document.getElementById("simStatusPill").textContent = "PAUSED (AWAITING OPERATOR)";
+        document.getElementById("simStatusPill").className = "sim-status-pill status-paused";
+
+        showOperatorModal(
+          "Stage 3 Alert: Ambulance Signal (SIG) Under Critical Attack",
+          `An attacker is injecting forged commands to change green lights on the ambulance route, risking emergency vehicle collisions. Shutting the signal off entirely stops ambulances (0% care). Switching to Safe Fallback ('Fixed-timer mode') keeps 60% of care active and deploys the staff playbook: "${sig.staff}".`,
+          `Traffic Police deploy immediately to manually keep ambulance lanes clear. Signal switches to offline fixed 60-second cycle.`
+        );
+
+        renderAll();
+
+      } else if (attackStage === 4) {
+        playTone(200, "sawtooth", 0.5);
+        const pwr = hospitalAssets.find(a => a.id === "PWR");
+        pwr.underAttack = true;
+        activeAlertAsset = pwr;
+        pwr.activeHash = computeSHA256(pwr.cfg + ";malicious_payload=disable_backup_gen");
+
+        const score = calculatePriorityScore(pwr);
+        addAuditLog(pwr.id, "Stage 4 [CRITICAL]: Remote command attempting to disable ICU & OT Backup Generator start!", score, pwr.currentCare);
+        setTickerMessage("Stage 4/5: LETHAL THREAT! Backup Power (PWR) under strike. Score: 103.0. SIMULATION PAUSED for Human Operator confirmation.");
+
+        if (attackTimer) clearTimeout(attackTimer);
+        if (countdownTimer) clearInterval(countdownTimer);
+        document.getElementById("stageCountdownText").textContent = "PAUSED: AWAITING OPERATOR";
+
+        isPausedForHuman = true;
+        document.getElementById("simStatusPill").textContent = "PAUSED (AWAITING OPERATOR)";
+        document.getElementById("simStatusPill").className = "sim-status-pill status-paused";
+
+        showOperatorModal(
+          "Stage 4 Alert: ICU & OT Backup Power Controller (PWR) Targeted",
+          `Attacker is attempting to disable automatic generator engagement during a simulated power outage. If successful, ICU ventilators and Operating Theatres lose power! Confirm Safe Fallback ('Manual generator start', 85% care kept) and verify clean cryptographic SHA-256 backup copy before recovery.`,
+          `Staff Playbook: Hospital Electrical Engineer stationed at generator to start by hand if mains fails.`
+        );
+
+        renderAll();
+
+      } else if (attackStage === 5) {
+        playTone(587, "sine", 0.3);
+        setTickerMessage("Stage 5/5: Cryptographic recovery in progress. Restoring all lifelines from verified clean golden master copies...");
+        document.getElementById("stageCountdownText").textContent = "Restoring clean copies...";
+
+        setTimeout(() => {
+          hospitalAssets.forEach(asset => {
+            asset.activeHash = asset.goldenHash;
+            asset.currentMode = "Normal";
+            asset.currentCare = 100;
+            asset.underAttack = false;
+          });
+          activeAlertAsset = null;
+
+          addAuditLog("ALL", "Stage 5 Complete: All 5 hospital lifelines restored from clean SHA-256 verified copies. Zero fatal downtime.", 0, 100);
+          setTickerMessage("VICTORY: Attacker contained and repelled! Hospital Care Continuity never flatlined. All 5 lifelines 100% normal.");
+          document.getElementById("stageCountdownText").textContent = "Attack fully repelled";
+
+          isAttackRunning = false;
+          isPausedForHuman = false;
+          startAttackBtn.disabled = false;
+          pauseAttackBtn.disabled = true;
+
+          document.getElementById("simStatusPill").textContent = "ATTACK REPELLED (SUCCESS)";
+          document.getElementById("simStatusPill").className = "sim-status-pill status-complete";
+
+          playTone(523, "sine", 0.2);
+          setTimeout(() => playTone(659, "sine", 0.2), 150);
+          setTimeout(() => playTone(784, "sine", 0.3), 300);
+
+          renderAll();
+
+          setTimeout(() => {
+            openJurySummaryModal();
+          }, 800);
+        }, 2200);
+      }
+
+      updateStepperDisplay();
+    }
+
+    function updateStepperDisplay() {
+      for (let s = 1; s <= 5; s++) {
+        const node = document.getElementById(`stepNode${s}`);
+        if (!node) continue;
+        node.classList.remove("active", "completed", "paused-step");
+
+        if (s < attackStage) {
+          node.classList.add("completed");
+        } else if (s === attackStage) {
+          node.classList.add("active");
+          if (isPausedForHuman && (s === 3 || s === 4)) {
+            node.classList.add("paused-step");
+          }
+        }
+      }
+    }
+
+    function setTickerMessage(msg) {
+      const tickerEl = document.getElementById("tickerMessage");
+      if (tickerEl) tickerEl.textContent = msg;
+    }
+
+    // --- MODAL CONTROLS ---
+    function showOperatorModal(title, body, playbook) {
+      document.getElementById("modalHeaderTitle").textContent = title;
+      document.getElementById("modalBodyText").textContent = body;
+      document.getElementById("modalStaffPlaybook").textContent = playbook;
+      document.getElementById("operatorModal").classList.add("open");
+    }
+
+    function closeModal() {
+      document.getElementById("operatorModal").classList.remove("open");
+      document.getElementById("jurySummaryModal").classList.remove("open");
+    }
+
+    document.getElementById("modalDismissBtn").addEventListener("click", closeModal);
+
+    document.getElementById("modalConfirmActionBtn").addEventListener("click", async () => {
+      closeModal();
+      if (activeAlertAsset) {
+        await applyOperatorDecision(activeAlertAsset, "fallback");
+      }
+      isPausedForHuman = false;
+      document.getElementById("simStatusPill").textContent = "RUNNING";
+      document.getElementById("simStatusPill").className = "sim-status-pill status-running";
+      startStageCountdown(4, () => triggerNextStage());
+    });
+
+    async function loadBackendReportModal() {
+      if (isBackendConnected) {
+        try {
+          const res = await fetch(`${API_BASE}/api/simulation/report`);
+          if (res.ok) {
+            const data = await res.json();
+            const boxes = document.querySelectorAll(".summary-stat-box .summary-stat-val");
+            if (boxes.length >= 4) {
+              boxes[0].textContent = `${data.total_hospital_blackout_seconds} SECONDS`;
+              boxes[1].textContent = data.minimum_care_continuity_maintained;
+              boxes[2].textContent = `${data.patients_protected.toLocaleString()}+`;
+              boxes[3].textContent = `${data.operator_governance_signoffs} Confirmed`;
+            }
+          }
+        } catch (e) {}
+      }
+      openJurySummaryModal();
+    }
+
+    function openJurySummaryModal() {
+      document.getElementById("jurySummaryModal").classList.add("open");
+    }
+
+    document.getElementById("juryModalCloseBtn").addEventListener("click", closeModal);
+    document.getElementById("juryModalExportBtn").addEventListener("click", () => {
+      exportAuditLogFile();
+    });
+
+    // --- TABS (Audit Log vs Staff Playbooks) ---
+    const tabBtnLog = document.getElementById("tabBtnLog");
+    const tabBtnStaff = document.getElementById("tabBtnStaff");
+    const tabContentLog = document.getElementById("tabContentLog");
+    const tabContentStaff = document.getElementById("tabContentStaff");
+
+    tabBtnLog.addEventListener("click", () => {
+      tabBtnLog.classList.add("active");
+      tabBtnLog.setAttribute("aria-selected", "true");
+      tabBtnStaff.classList.remove("active");
+      tabBtnStaff.setAttribute("aria-selected", "false");
+      tabContentLog.classList.add("active");
+      tabContentStaff.classList.remove("active");
+    });
+
+    tabBtnStaff.addEventListener("click", () => {
+      tabBtnStaff.classList.add("active");
+      tabBtnStaff.setAttribute("aria-selected", "true");
+      tabBtnLog.classList.remove("active");
+      tabBtnLog.setAttribute("aria-selected", "false");
+      tabContentStaff.classList.add("active");
+      tabContentLog.classList.remove("active");
+    });
+
+    document.getElementById("openAllPlaybooksBtn").addEventListener("click", () => {
+      tabBtnStaff.click();
+      document.getElementById("commandTitle").scrollIntoView({ behavior: "smooth" });
+    });
+
+    // --- EXPORT AUDIT LOG FILE (SQLite Database or Local JSON) ---
+    document.getElementById("exportLogBtn").addEventListener("click", () => {
+      exportAuditLogFile();
+    });
+
+    async function exportAuditLogFile() {
+      if (isBackendConnected) {
+        try {
+          const res = await fetch(`${API_BASE}/api/audit-logs/export`);
+          if (res.ok) {
+            const data = await res.json();
+            triggerDownload(JSON.stringify(data, null, 2), `Nagar-Raksha_SQLite_AuditLog_${Date.now()}.json`);
+            return;
+          }
+        } catch (e) {}
+      }
+
+      // Offline export
+      const dataStr = JSON.stringify({
+        hackathon: "Cyber Samvad Hackathon 2026",
+        problemStatement: "Problem Statement 4: Smart City and Critical Infrastructure Cybersecurity",
+        prototype: "Nagar-Raksha: Hospital Edition",
+        exportTimestamp: new Date().toISOString(),
+        careContinuityScore: calculateCareContinuity() + "%",
+        assets: hospitalAssets,
+        incidentAuditLogs: incidentLogs
+      }, null, 2);
+      triggerDownload(dataStr, `Nagar-Raksha_Hospital_AuditLog_${Date.now()}.json`);
+    }
+
+    function triggerDownload(content, filename) {
+      const blob = new Blob([content], { type: "application/json;charset=utf-8" });
+      const url = URL.createObjectURL(blob);
+      const downloadAnchor = document.createElement("a");
+      downloadAnchor.setAttribute("href", url);
+      downloadAnchor.setAttribute("download", filename);
+      document.body.appendChild(downloadAnchor);
+      downloadAnchor.click();
+      downloadAnchor.remove();
+      URL.revokeObjectURL(url);
+    }
+
+    // --- SOUND TOGGLE ---
+    const soundToggleBtn = document.getElementById("soundToggleBtn");
+    const soundIcon = document.getElementById("soundIcon");
+    const soundLabel = document.getElementById("soundLabel");
+
+    soundToggleBtn.addEventListener("click", () => {
+      soundEnabled = !soundEnabled;
+      soundIcon.textContent = soundEnabled ? "🔔" : "🔕";
+      soundLabel.textContent = soundEnabled ? "Sound On" : "Sound Off";
+    });
+
+    // --- THEME TOGGLE (Light & Dark Mode) ---
+    const themeToggleBtn = document.getElementById("themeToggleBtn");
+    const themeIcon = document.getElementById("themeIcon");
+    const themeLabel = document.getElementById("themeLabel");
+
+    function applyTheme(theme) {
+      document.documentElement.setAttribute("data-theme", theme);
+      if (theme === "light") {
+        themeIcon.textContent = "🌙";
+        themeLabel.textContent = "Dark Mode";
+      } else {
+        themeIcon.textContent = "☀️";
+        themeLabel.textContent = "Light Mode";
+      }
+      try {
+        localStorage.setItem("nr_theme", theme);
+      } catch (e) {}
+    }
+
+    themeToggleBtn.addEventListener("click", () => {
+      const current = document.documentElement.getAttribute("data-theme") || "dark";
+      const next = current === "dark" ? "light" : "dark";
+      applyTheme(next);
+    });
+
+    try {
+      const savedTheme = localStorage.getItem("nr_theme");
+      if (savedTheme) applyTheme(savedTheme);
+    } catch (e) {}
+
+    // --- RESET ALL BUTTON ---
+    document.getElementById("resetAllBtn").addEventListener("click", async () => {
+      if (confirm("Reset all 5 hospital lifelines, simulation state, and logs?")) {
+        if (isBackendConnected) {
+          try {
+            await fetch(`${API_BASE}/api/simulation/reset`, { method: "POST" });
+            await syncWithBackend();
+          } catch (e) {}
+        }
+        incidentLogs = [];
+        resetAttackSimulation();
+      }
+    });
+
+    // --- INITIAL RENDER & BACKEND HEALTH CHECK ---
+    document.addEventListener("DOMContentLoaded", async () => {
+      renderAll();
+      await checkBackendConnection();
+      // Periodically sync with backend
+      pollInterval = setInterval(checkBackendConnection, 5000);
+    });
+  </script>
+</body>
+</html>
